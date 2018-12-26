@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="WebhookProxy.Client" Version="1.0.0" />
+    <ProjectReference Include="..\WebhookProxy.Client\WebhookProxy.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
