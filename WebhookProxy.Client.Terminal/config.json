@@ -1,0 +1,21 @@
+{
+
+  "serverEndpoint" : {
+      "url" : "http://localhost:50009/proxy-client",
+      "connectionTimeout" : 300000,
+      "keepAliveInterval" : 30000
+  },
+
+  "destinationEndpoint": {
+    "url": "http://localhost:50009/return/418",
+    "validateSsl": true,
+    "requestTimeout": 10000,
+    "maxRedirects": 2,
+    "clientCertificates": "",
+    "networkCredentials": {
+      "user": "",
+      "pass": ""
+    }
+  }
+
+}
