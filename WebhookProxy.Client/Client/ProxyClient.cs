@@ -118,7 +118,6 @@ namespace WebhookProxy.Client
                 return;
             }
 
-            var destinationResponseBody = await destinationTransaction.Response.Content.ReadAsStringAsync();
             Events.OnResponseReceived(destinationTransaction.Response);
 
            await ForwardToProxyServer(destinationTransaction.Response);
