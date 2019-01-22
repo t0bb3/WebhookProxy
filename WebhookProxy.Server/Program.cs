@@ -24,7 +24,7 @@ namespace WebhookProxy.Server
                                                   .AllowAnyMethod());
                         });
 
-                        services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                        services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
                         services.AddHttpContextAccessor();
                         services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
