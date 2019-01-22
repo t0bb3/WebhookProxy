@@ -71,7 +71,7 @@ namespace WebhookProxy.Server.Controllers
             dynamic body = bodyStream.ReadToEnd();
 
             var contentType = Request.Headers.Where(p => p.Key.ToLower().Equals("content-type")).Select(p => p.Value.ToString()).FirstOrDefault() ?? "text/plain";
-            if (contentType == "application/json")
+            if (contentType.Contains("application/json"))
                 body = JsonConvert.DeserializeObject(body);
 
             return body;
@@ -116,7 +116,7 @@ namespace WebhookProxy.Server.Controllers
 
             var contentType = httpHeaders.Where(header => header.Key.ToLower().Equals("content-type")).Select(header => header.Value.ToString().ToLower()).FirstOrDefault();
 
-            var body = contentType == "application/json" ? JsonConvert.SerializeObject(httpBody) : httpBody;
+            var body = contentType.Contains("application/json") ? JsonConvert.SerializeObject(httpBody) : httpBody;
 
             var proxyClientRequest = new ProxyClientRequest(proxyClientId, httpMethod, headers, body);
 
