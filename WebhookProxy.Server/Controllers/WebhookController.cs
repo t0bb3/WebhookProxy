@@ -34,28 +34,34 @@ namespace WebhookProxy.Server.Controllers
         private readonly List<string> _responseHeaderBlacklist = new List<string>()
         {
             "transfer-encoding",
-            "content-type"
+            "content-type",
         };
-
 
         [HttpPost, HttpGet, HttpPut, HttpDelete, Route("{proxyClientId}")]
         public async Task<ActionResult> IncomingRequest(string proxyClientId)
         {
-            var client = GetProxyClient(proxyClientId);
-            if (client == null) return StatusCode((int)HttpStatusCode.BadGateway, Json(new { error = "Proxy client {proxyClientId} not found" }));
+            try
+            {
+                var client = GetProxyClient(proxyClientId);
+                if (client == null) return StatusCode((int)HttpStatusCode.BadGateway, Json(new { error = "Proxy client {proxyClientId} not found" }));
 
-            dynamic requestBody = GetRequestBody();
-            
-            var proxyClientRequest = CreateProxyClientRequest(proxyClientId, new HttpMethod(Request.Method), Request.Headers, requestBody);
+                dynamic requestBody = GetRequestBody();
+                
+                var proxyClientRequest = CreateProxyClientRequest(proxyClientId, new HttpMethod(Request.Method), Request.Headers, requestBody);
 
-            await ForwardWebhookToProxyClient(client, proxyClientRequest);
+                await ForwardWebhookToProxyClient(client, proxyClientRequest);
 
-            var webhookResponse = WaitForProxyClientResponse(proxyClientId);
-            if (webhookResponse == null) return StatusCode((int)HttpStatusCode.GatewayTimeout, Json(new { error = "No response from proxy client" }));
+                var webhookResponse = WaitForProxyClientResponse(proxyClientId);
+                if (webhookResponse == null) return StatusCode((int)HttpStatusCode.GatewayTimeout, Json(new { error = "No response from proxy client" }));
 
-            AddResponseHeaders(webhookResponse);
+                AddResponseHeaders(webhookResponse);
 
-            return StatusCode(webhookResponse.StatusCode, webhookResponse.Body);
+                return StatusCode(webhookResponse.StatusCode, webhookResponse.Body);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
         }
 
 
@@ -93,8 +99,8 @@ namespace WebhookProxy.Server.Controllers
 
             try
             {
-                proxyClient = _proxyClientHubContext.Clients.All;
-                //proxyClient = _proxyClientHubContext.Clients.Client(connectionId);
+                //proxyClient = _proxyClientHubContext.Clients.All;
+                proxyClient = _proxyClientHubContext.Clients.Client(connectionId);
             }
             catch(Exception){}
 
@@ -105,7 +111,8 @@ namespace WebhookProxy.Server.Controllers
         {
             var headers = httpHeaders.ToDictionary(k => k.Key, v => v.Value.ToString());
 
-            headers.Add("X-Forwarded-For", _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
+            if (!headers.Keys.Any(key => key.ToLower().Equals("x-forwarded-for")))
+                headers.Add("X-Forwarded-For", _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
 
             var contentType = httpHeaders.Where(header => header.Key.ToLower().Equals("content-type")).Select(header => header.Value.ToString().ToLower()).FirstOrDefault();
 
