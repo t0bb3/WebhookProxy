@@ -175,8 +175,13 @@ namespace WebhookProxy.Client
                                                         .FirstOrDefault();
             
             if(proxyRequest?.Body != null && contentTypeHeader != null)
-                destinationRequest.Content = new StringContent(proxyRequest.Body, Encoding.UTF8, contentTypeHeader);
+            {
+                if(contentTypeHeader.ToLower().Contains("application/json"))
+                    contentTypeHeader = "application/json";
 
+                destinationRequest.Content = new StringContent(proxyRequest.Body, Encoding.UTF8, contentTypeHeader);
+            }
+            
             // TODO: Detect correct encoding? Always UTF8?
         }
 
