@@ -57,16 +57,9 @@ proxyClient.forwardRequest = function(proxyRequest)
 
     for(i = 0;i<proxyRequest.headers.length;i++)
     {
-        try
-        {
-            var header = proxyRequest.headers[i];
-            app.currentTransaction.request.ajax.setRequestHeader(header.key, header.value);
-        }
-        catch(err){
-            console.debug(err);
-        }
+        var header = proxyRequest.headers[i];
+        app.currentTransaction.request.ajax.setRequestHeader(header.key, header.value);
     }
-
 
     app.currentTransaction.request.ajax.onprogress = function()
     {
