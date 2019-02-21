@@ -51,24 +51,30 @@ namespace WebhookProxy.Server.Controllers
 
                 var result = JsonConvert.DeserializeObject(webhookResponse.Body);
 
-                return Json(result, new JsonSerializerSettings() { });
+                return Json(result);
             }
             catch (Exception e)
             {
-                return Json(new { Status = 500, Error = e.Message });
+                return Json(new { HttpStatus = 500, Error = e.Message, StackTrace = e.StackTrace });
             }
         }
         
         private dynamic GetRequestBody()
         {
             var bodyStream = new StreamReader(Request.Body);
-            dynamic body = bodyStream.ReadToEnd();
 
-            var contentType = Request.Headers.Where(p => p.Key.ToLower().Equals("content-type")).Select(p => p.Value.ToString()).FirstOrDefault() ?? string.Empty;
-            if (contentType.Contains("application/json"))
-                body = JsonConvert.DeserializeObject(body);
+            dynamic requestBody = bodyStream.ReadToEnd();
 
-            return body;
+            var expectJson = Request.Headers.Where(header => header.Key.ToLower().Equals("content-type"))
+                                            .Any(header => header.Value.Contains("application/json"));
+
+            if (expectJson)
+                requestBody = JsonConvert.DeserializeObject(requestBody);
+
+            bodyStream.Close();
+            bodyStream.Dispose();
+
+            return requestBody;
         }
 
         private void AddResponseHeaders(ProxyClientResponse webhookResponse)
@@ -100,11 +106,12 @@ namespace WebhookProxy.Server.Controllers
 
         private ProxyClientRequest CreateProxyClientRequest(string proxyClientId, HttpMethod httpMethod, IHeaderDictionary httpHeaders, dynamic httpBody)
         {
-            var headers = httpHeaders.ToDictionary(k => k.Key, v => v.Value.ToString());
+            var headers = httpHeaders.ToDictionary(header => header.Key, header => header.Value.ToString());
 
-            var contentType = httpHeaders.Where(header => header.Key.ToLower().Equals("content-type")).Select(header => header.Value.ToString().ToLower()).FirstOrDefault();
+            var expectJson = headers.Where(header => header.Key.ToLower().Equals("content-type"))
+                                    .Any(header => header.Value.Contains("application/json"));
 
-            var body = contentType.Contains("application/json") ? JsonConvert.SerializeObject(httpBody) : httpBody;
+            var body = expectJson ? JsonConvert.SerializeObject(httpBody) : httpBody;
 
             var proxyClientRequest = new ProxyClientRequest(proxyClientId, httpMethod, headers, body);
 

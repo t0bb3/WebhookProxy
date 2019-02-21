@@ -23,9 +23,7 @@ namespace WebhookProxy.Server.IO
             requestWaitHandle.WaitOne(timeout);
 
             _requestWaitHandlers.TryRemove(proxyClientId, out requestWaitHandle);
-
-            if (!_proxyClientResponses.ContainsKey(proxyClientId))
-                return null;
+            requestWaitHandle?.Dispose();
 
             _proxyClientResponses.TryRemove(proxyClientId, out ProxyClientResponse proxyClientWebhookResponse);
 
@@ -34,13 +32,11 @@ namespace WebhookProxy.Server.IO
 
         public static void SetProxyClientResponse(string proxyClientId, ProxyClientResponse proxyClientResponse)
         {
-            _proxyClientResponses.TryAdd(proxyClientId, proxyClientResponse);
+            if(!_requestWaitHandlers.TryRemove(proxyClientId, out EventWaitHandle proxyClientWaitHandler)) return;
 
-            if(_requestWaitHandlers.TryRemove(proxyClientId, out EventWaitHandle proxyClientWaitHandler))
-            {
-                proxyClientWaitHandler.Set();
-                proxyClientWaitHandler.Dispose();
-            }
+            _proxyClientResponses.TryAdd(proxyClientId, proxyClientResponse);
+            proxyClientWaitHandler.Set();
+            proxyClientWaitHandler.Dispose();
         }
 
     }
