@@ -69,7 +69,14 @@
                         <h3 style="color:#f0f0f0;font-family: 'Abel', sans-serif;font-weight: bold;font-size:16px;margin-bottom:5px;">WEBHOOK URL</h3>
                     </td>
                     <td>
-                        <h3 id="webhookUrl" v-on:click="" style="color:#f0f0f0;font-family: 'Abel', sans-serif;font-weight: bold;font-size:16px;margin-bottom:5px;">{{domainName}}/{{ serverConnectionId }}</h3>
+                        <h3 id="webhookUrl" v-on:click="" style="color:#f0f0f0;font-family: 'Abel', sans-serif;font-weight: bold;font-size:16px;margin-bottom:5px;">{{domainName}}/{{ serverConnectionId }} ({{webhookEndpointUrl}})</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Subscribe</td>
+                    <td>
+                        <input type="text" v-model="webhookEndpointUrl" />
+                        <button onclick="proxyClient.subscribeEndpoint()">Subscribe</button>
                     </td>
                 </tr>
                 <tr>

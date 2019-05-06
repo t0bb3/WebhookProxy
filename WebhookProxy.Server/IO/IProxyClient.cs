@@ -12,6 +12,8 @@ namespace WebhookProxy.Server.IO
 
         Task OnProxyRequest(ProxyClientRequest request);
 
+        Task OnEndpointSubscription(string endpoint);
+
     }
 
 }

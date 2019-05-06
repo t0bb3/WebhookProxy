@@ -10,6 +10,7 @@ var app = new Vue({
         transactionLog: [],
         destinationRequestTimeout: 10000,
         destinationEndpointUrl: 'http://localhost:50009/return/200',
+        webhookEndpointUrl: '',
         
         domainName: window.location.origin,
         hideTransactionHeaders: true,

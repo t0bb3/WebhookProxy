@@ -16,6 +16,12 @@ namespace WebhookProxy.Server.Controllers
             return await Timeout();
         }
 
+        [Route("json")]
+        public JsonResult ReturnJson()
+        {
+            return Json(new{Foo="bar"});
+        }
+
         [Route("200")]
         public ActionResult ReturnOk()
         {

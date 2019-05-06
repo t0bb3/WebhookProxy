@@ -28,23 +28,26 @@ namespace WebhookProxy.Server.Controllers
         private readonly IHubContext<ProxyClientHub, IProxyClient> _proxyClientHubContext;
         private readonly TimeSpan _proxyClientForwardTimeout = TimeSpan.FromSeconds(60);
 
-        [Route("{proxyClientId}")]
+        [Route("{endpoint}")]
         [Consumes("application/json"), Produces("application/json")]
         [HttpPost, HttpGet, HttpPut, HttpDelete]
-        public async Task<JsonResult> IncomingRequest(string proxyClientId)
+        public async Task<JsonResult> IncomingRequest(string endpoint)
         {
             try
             {
-                var client = GetProxyClient(proxyClientId);
-                if (client == null) return Json(new { error = "Proxy client {proxyClientId} not found" });
-
+        
                 dynamic requestBody = GetRequestBody();
-                
-                var proxyClientRequest = CreateProxyClientRequest(proxyClientId, new HttpMethod(Request.Method), Request.Headers, requestBody);
 
-                await ForwardWebhookToProxyClient(client, proxyClientRequest);
+                foreach(var proxyClientId in EndpointSubscriptions.GetEndpointSubscribers(endpoint))
+                {
+                    var client = GetProxyClient(proxyClientId);
 
-                var webhookResponse = WaitForProxyClientResponse(proxyClientId);
+                    var proxyClientRequest = CreateProxyClientRequest(proxyClientId, new HttpMethod(Request.Method), Request.Headers, requestBody);
+
+                    await ForwardWebhookToProxyClient(client, proxyClientRequest);
+                }
+
+                var webhookResponse = WaitForProxyClientResponse(endpoint);
                 if (webhookResponse == null) return Json(new { error = "No response from proxy client" });
 
                 AddResponseHeaders(webhookResponse);
@@ -83,6 +86,9 @@ namespace WebhookProxy.Server.Controllers
 
             foreach(var responseHeader in webhookResponse.Headers)
             {
+                if(responseHeader.Key == "transfer-encoding") continue;
+                if(responseHeader.Key == "content-type") continue;
+                
                 try
                 {
                     Response.Headers.TryAdd(responseHeader.Key, responseHeader.Value);

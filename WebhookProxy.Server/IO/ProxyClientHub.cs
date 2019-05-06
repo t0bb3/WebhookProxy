@@ -18,6 +18,15 @@ namespace WebhookProxy.Server.IO
             
         }
 
+        [HubMethodName("OnProxyClientSubscribeEndpoint")]
+        public void OnProxyClientSubscribeEndpoint(string endpoint)
+        {
+            if(EndpointSubscriptions.AddSubscriber(endpoint, Context.ConnectionId))
+            {
+                Clients.Caller.OnEndpointSubscription(endpoint);
+            }
+        }
+
         [HubMethodName("OnProxyWebClientResponse")]
         public void OnProxyWebClientResponse(dynamic proxyWebClientResponse)
         {
@@ -36,7 +45,9 @@ namespace WebhookProxy.Server.IO
 
             var proxyClientResponse = new ProxyClientResponse(Context.ConnectionId, responseHeaders, responseBody, (int)proxyWebClientResponse.statusCode);
 
-            RequestPool.SetProxyClientResponse(Context.ConnectionId, proxyClientResponse);
+            var endpoint = EndpointSubscriptions.GetClientEndpoint(Context.ConnectionId);
+
+            RequestPool.SetProxyClientResponse(endpoint, proxyClientResponse);
         }
 
         [HubMethodName("OnProxyClientResponse")]

@@ -26,6 +26,17 @@ proxyClient.connection.on("OnProxyRequest", (proxyRequest) => {
 
 });
 
+proxyClient.subscribeEndpoint = function()
+{
+    console.info("Subscribing to endpoint " + app.webhookEndpointUrl);
+    proxyClient.connection.invoke("OnProxyClientSubscribeEndpoint", app.webhookEndpointUrl).catch(err => console.error(err.toString()));
+}
+
+proxyClient.connection.on("OnEndpointSubscription", (endpoint) => { 
+    console.info("Subscription confirmed, now listening on " + endpoint);
+    app.webhookEndpointUrl = endpoint;
+});
+
 proxyClient.forwardRequest = function(proxyRequest)
 {
     console.info("Forwarding request to " + app.destinationEndpointUrl);
