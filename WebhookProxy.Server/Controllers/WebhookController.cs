@@ -51,7 +51,7 @@ namespace WebhookProxy.Server.Controllers
 
                 AddResponseHeaders(webhookResponse);
                 
-                var expectJson = (webhookResponse.Headers.Where(header => header.Key.ToLower().Equals("content-type")).Any(header => header.Value.Contains("application/json");
+                var expectJson = (webhookResponse.Headers.Where(header => header.Key.ToLower().Equals("content-type")).Any(header => header.Value.Contains("application/json")));
 
                 if(expectJson)
                 {
