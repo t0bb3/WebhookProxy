@@ -6,7 +6,7 @@ Reverse proxy. Forwarding webhooks from internet services to endpoints within NA
 2. Browse to server and configure webhook and destination endpoint of your choice
 3. Point your internet service webhooks to configured webhook endpoint
 
-*PROXY SERVER* forwards webhooks to *WEB BROWSER* (proxy client) which in turn forwards to *WEBHOOK RECEIVER* (destination endpoint) via AJAX.
+*PROXY SERVER* forwards webhooks via websocket to *WEB BROWSER* (proxy client) which in turn forwards to *WEBHOOK RECEIVER* (destination endpoint) via AJAX. The connection between *PROXY SERVER* and *WEB BROWSER* (proxy client) is established on websocket which fallback to  longpolling and server-side-events on bad connections.
 
 ![](https://github.com/t0bb3/webhook-proxy/blob/master/overview.PNG)
 
