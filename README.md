@@ -3,10 +3,10 @@ Reverse proxy. Forwarding webhooks from internet services to endpoints within NA
 
 ## HOW IT WORKS
 1. Deploy *PROXY SERVER* on a server accessible from the Internet
-2. Browse to server and configure webhook + destination endpoint
-3. Point your internet service webhooks to configured webhook url
+2. Browse to server and configure webhook and destination endpoint of your choice
+3. Point your internet service webhooks to configured webhook endpoint
 
-*PROXY SERVER* forwards webhooks to *WEB BROWSER* (proxy client), which in turn forwards to *WEBHOOK RECEIVER* (destination endpoint) via AJAX.
+*PROXY SERVER* forwards webhooks to *WEB BROWSER* (proxy client) which in turn forwards to *WEBHOOK RECEIVER* (destination endpoint) via AJAX.
 
 ![](https://github.com/t0bb3/webhook-proxy/blob/master/overview.PNG)
 
@@ -18,4 +18,4 @@ Reverse proxy. Forwarding webhooks from internet services to endpoints within NA
 ### DEALING WITH CORS
 The web based proxy client forwarding webhooks to destination endpoints using AJAX. Therefore, the destination endpoint must support CORS requests or CORS protection must be disabled in the browser.
 
-(e.g. start chrome with the --disable-web-security parameter)
+(e.g. start chrome using --disable-web-security)
