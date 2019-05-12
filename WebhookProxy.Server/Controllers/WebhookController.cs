@@ -18,27 +18,26 @@ namespace WebhookProxy.Server.Controllers
     public class WebhookController : Controller
     {
 
-        public WebhookController(IHubContext<ProxyClientHub, IProxyClient> proxyClientHubContext, IHttpContextAccessor accessor)
+        public WebhookController(IHubContext<ProxyClientHub, IProxyClient> proxyClientHubContext)
         {
             _proxyClientHubContext = proxyClientHubContext;
-            _httpContextAccessor = accessor;
         }
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHubContext<ProxyClientHub, IProxyClient> _proxyClientHubContext;
         private readonly TimeSpan _proxyClientForwardTimeout = TimeSpan.FromSeconds(60);
 
         [Route("{endpoint}")]
-        [Consumes("application/json"), Produces("application/json")]
         [HttpPost, HttpGet, HttpPut, HttpDelete]
-        public async Task<JsonResult> IncomingRequest(string endpoint)
+        public async Task<ActionResult> IncomingRequest(string endpoint)
         {
             try
             {
         
                 dynamic requestBody = GetRequestBody();
 
-                foreach(var proxyClientId in EndpointSubscriptions.GetEndpointSubscribers(endpoint))
+                var endpointSubscribers =  EndpointSubscriptions.GetEndpointSubscribers(endpoint);
+
+                foreach(var proxyClientId in endpointSubscribers)
                 {
                     var client = GetProxyClient(proxyClientId);
 
@@ -51,10 +50,19 @@ namespace WebhookProxy.Server.Controllers
                 if (webhookResponse == null) return Json(new { error = "No response from proxy client" });
 
                 AddResponseHeaders(webhookResponse);
+                
+                var expectJson = (webhookResponse.Headers.Where(header => header.Key.ToLower().Equals("content-type")).Any(header => header.Value.Contains("application/json");
 
-                var result = JsonConvert.DeserializeObject(webhookResponse.Body);
+                if(expectJson)
+                {
+                    var result = JsonConvert.DeserializeObject(webhookResponse.Body);
+                    return Json(result);
+                }
+                else
+                {
+                    return StatusCode(webhookResponse.StatusCode, webhookResponse.Body);
+                }
 
-                return Json(result);
             }
             catch (Exception e)
             {

@@ -15,6 +15,8 @@ proxyClient.connection.on("OnConnected", (connectionId) => {
 
     app.serverConnectionId = connectionId;
     app.serverConnectionState = 'connected';
+
+    proxyClient.subscribeEndpoint(connectionId);
 });
 
 proxyClient.connection.on("OnProxyRequest", (proxyRequest) => { 
@@ -26,15 +28,18 @@ proxyClient.connection.on("OnProxyRequest", (proxyRequest) => {
 
 });
 
-proxyClient.subscribeEndpoint = function()
+proxyClient.subscribeEndpoint = function(endpoint)
 {
-    console.info("Subscribing to endpoint " + app.webhookEndpointUrl);
-    proxyClient.connection.invoke("OnProxyClientSubscribeEndpoint", app.webhookEndpointUrl).catch(err => console.error(err.toString()));
+    console.info("Subscribing to webhook endpoint: " + app.domainName + "/" + endpoint);
+    proxyClient.connection.invoke("OnProxyClientSubscribeEndpoint", endpoint).catch(err => console.error(err.toString()));
+    console.debug("Waiting for endpoint subscription confirmation from proxy server..");
 }
 
 proxyClient.connection.on("OnEndpointSubscription", (endpoint) => { 
-    console.info("Subscription confirmed, now listening on " + endpoint);
-    app.webhookEndpointUrl = endpoint;
+    console.info("Subscription confirmed, listening on webhook endpoint: " + app.domainName + "/" + endpoint);
+    app.editWebhookEndpoint = endpoint;
+    app.webhookEndpoint = endpoint;
+    app.webhookEndpointEditMode = false;
 });
 
 proxyClient.forwardRequest = function(proxyRequest)

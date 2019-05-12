@@ -10,7 +10,6 @@ var app = new Vue({
         transactionLog: [],
         destinationRequestTimeout: 10000,
         destinationEndpointUrl: 'http://localhost:50009/return/200',
-        webhookEndpointUrl: '',
         
         domainName: window.location.origin,
         hideTransactionHeaders: true,
@@ -19,17 +18,11 @@ var app = new Vue({
             return moment(date);
         },
 
-        connecting: false,
-        askingForDestination: false,
-        connected: false,
-        waitingForResponse: false,
-        clientId: '',
-        destinationEndpoint: 'https://localhost:5001/error',
-        transactionLog: [],
-        lastRequestFromProxy: null,
-        lastReplyFromDestination: null,
-        destinationEndpointStatusCode: -1,
-        destinationEndpointStatusText: '',
-        destinationEndpointRequestTimeout: 10000
+        webhookEndpointEditMode: false,
+        destinationEndpointEditMode: false,
+
+        webhookEndpoint: '?',
+        editWebhookEndpoint: '?',
+
     }
 })
