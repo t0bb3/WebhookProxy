@@ -25,6 +25,10 @@ namespace WebhookProxy.Server.IO
             {
                 Clients.Caller.OnEndpointSubscription(endpoint);
             }
+            else
+            {
+                 throw new HubException("Failed to subscribe to endpoint.");
+            }
         }
 
         [HubMethodName("OnProxyWebClientResponse")]
@@ -66,14 +70,13 @@ namespace WebhookProxy.Server.IO
 
         public override async Task OnConnectedAsync()
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, Context.ConnectionId);
             await base.OnConnectedAsync();
             await Clients.Caller.OnConnected(Context.ConnectionId);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.ConnectionId);
+            EndpointSubscriptions.RemoveSubscriber(Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
 

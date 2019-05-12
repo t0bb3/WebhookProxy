@@ -25,12 +25,14 @@ namespace WebhookProxy.Server.IO
 
         public static bool AddSubscriber(string endpoint, string proxyClientId)
         {
-
-            if(_endpointSubscribers.ContainsKey(proxyClientId))
-                _endpointSubscribers.Remove(proxyClientId, out string previouseEndpoint);
+            _endpointSubscribers.Remove(proxyClientId, out string previousEndpoint);
 
             return _endpointSubscribers.TryAdd(proxyClientId, endpoint);
+        }
 
+        public static bool RemoveSubscriber(string proxyClientId)
+        {
+            return _endpointSubscribers.Remove(proxyClientId, out string endpoint);
         }
 
         public static string GetClientEndpoint(string proxyClientId)
