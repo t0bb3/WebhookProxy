@@ -1,4 +1,4 @@
-# WebhookProxy
+# WEBHOOK PROXY
 Reverse proxy. Forwarding webhooks to endpoints within NAT networks.
 
 ### HOW IT WORKS
