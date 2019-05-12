@@ -13,3 +13,7 @@ Reverse proxy. Forwarding webhooks from internet to endpoints within NAT network
 
 ## HOW IT LOOKS
 ![](https://github.com/t0bb3/webhook-proxy/blob/master/screenshot.PNG)
+
+
+### DEALING WITH CORS
+The proxy client is based on javascript and forwards webhooks to the destination endpoint using AJAX. Therefore, the recipient (destination endpoint) must support CORS requests or the CORS protection must be disabled in the browser.
