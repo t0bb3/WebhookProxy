@@ -8,7 +8,7 @@ Reverse proxy. Forwarding webhooks from internet services to endpoints within NA
 
 
 ## HOW IT LOOKS
-This is the web-based proxy client (hosted on proxy server), several people can use the same proxy server at the same time as long as one uses unique names for public webhook endpoints. If several proxy clients listen to the same public webhook endpoint, the clients will compete for who sends the response back to the sender of the webhook (fastest wins).
+This is the web-based proxy client (hosted on proxy server), several people can use the same proxy server at the same time as long as one uses unique names for public webhook endpoints. If several proxy clients listen to the same public webhook endpoint, the clients will compete for who sends the response back to the sender.
 
 
 ![](https://github.com/t0bb3/webhook-proxy/blob/master/screenshot.PNG)
