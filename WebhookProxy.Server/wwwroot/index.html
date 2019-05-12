@@ -48,7 +48,7 @@
                             <span v-on:click="destinationEndpointEditMode = true" style="cursor:pointer;">{{ destinationEndpointUrl }}</span>
                         </td>
                         <td v-if="destinationEndpointEditMode">
-                                <input type="text" style="width:500px;" v-model="destinationEndpointUrl" v-on:blur="destinationEndpointEditMode=false" />
+                                <input type="text" style="width:500px;" v-model="destinationEndpointUrl" v-on:keyup.13="destinationEndpointEditMode=false" v-on:blur="destinationEndpointEditMode=false" />
                         </td>
                     </tr>
                 </table>
