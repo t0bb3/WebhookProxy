@@ -35,7 +35,12 @@ namespace WebhookProxy.Server.Controllers
         
                 dynamic requestBody = GetRequestBody();
 
-                var endpointSubscribers =  EndpointSubscriptions.GetEndpointSubscribers(endpoint);
+                var endpointSubscribers = EndpointSubscriptions.GetEndpointSubscribers(endpoint);
+
+                if(endpointSubscribers.Count == 0)
+                {
+                    return StatusCode(StatusCodes.Status502BadGateway, $"No proxy client connected to endpoint '{endpoint}'.");
+                }
 
                 foreach(var proxyClientId in endpointSubscribers)
                 {
