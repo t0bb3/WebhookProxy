@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,8 @@ namespace WebhookProxy.Server
                         //app.UseDeveloperExceptionPage();
                         //app.UseHsts();
                         app.UseHttpsRedirection();
+                        
+                        app.UseDefaultFiles(new DefaultFilesOptions { DefaultFileNames = new List<string> { "ProxyClient.html" } });
                         
                         app.UseStaticFiles();
 
