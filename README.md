@@ -14,7 +14,7 @@ This is the web-based proxy client (hosted on proxy server), several people can 
 ![](https://github.com/t0bb3/webhook-proxy/blob/master/screenshot.PNG)
 
 
-## HOW TO INSTALL
+## HOW TO SETUP
 1. Deploy *PROXY SERVER* on a server accessible from the Internet
 2. Browse to server and configure webhook and destination endpoint of your choice
 3. Point your internet service webhooks to configured webhook endpoint
