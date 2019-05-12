@@ -136,8 +136,8 @@
             <div v-for="(transaction, index) in transactionLog.slice().reverse()" style="margin-bottom:10px;padding:15px;font-size:14px;background-color: #ffffff;border: 1px solid #f0f0f0;font-family: 'Inconsolata', monospace;">
 
                 <div v-if="transaction.expandedView == false" v-on:click="transaction.expandedView = true">
-                    <h3 style="margin:0px;float:right;">{{ moment(transaction.created).format("hh:mm:ss") }}</h3>
-                    <h3 style="margin:0px;font-size:18px;background-color: #ffffff;font-family: 'Inconsolata', monospace;">HTTP {{ transaction.request.method }} - HTTP {{ transaction.response.statusCode }}</h3>
+                    <h3 style="margin:0px;float:right;font-family: 'Inconsolata', monospace;">{{ moment(transaction.created).format("hh:mm:ss") }}</h3>
+                    <h3 style="margin:0px;font-size:18px;font-family: 'Inconsolata', monospace;">HTTP {{ transaction.request.method }} - HTTP {{ transaction.response.statusCode }}</h3>
                 </div>
 
                 <div v-if="transaction.expandedView == true" v-on:click="transaction.expandedView = false">
