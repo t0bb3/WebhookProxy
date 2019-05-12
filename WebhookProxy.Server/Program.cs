@@ -35,7 +35,7 @@ namespace WebhookProxy.Server
                     {
                         //app.UseDeveloperExceptionPage();
                         //app.UseHsts();
-                        //app.UseHttpsRedirection();
+                        app.UseHttpsRedirection();
                         
                         app.UseStaticFiles();
 
