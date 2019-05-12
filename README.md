@@ -4,7 +4,7 @@ Reverse proxy. Forwarding webhooks from internet services to endpoints within NA
 ## HOW IT WORKS
 1. Deploy *PROXY SERVER* on a server accessible from the Internet
 2. Browse to server and configure webhook + destination endpoint
-3. Point your internet service webhooks to the configured webhook url
+3. Point your internet service webhooks to configured webhook url
 
 *PROXY SERVER* forwards webhooks to *WEB BROWSER* (proxy client), which in turn forwards to *WEBHOOK RECEIVER* (destination endpoint) via AJAX.
 
