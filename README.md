@@ -1,5 +1,5 @@
 # WEBHOOK PROXY
-Reverse proxy. Forwarding webhooks to endpoints within NAT networks.
+Reverse proxy. Forwarding webhooks from internet to endpoints within NAT networks.
 
 ## HOW IT WORKS
 1. Deploy *PROXY SERVER* on a server accessible from the Internet
