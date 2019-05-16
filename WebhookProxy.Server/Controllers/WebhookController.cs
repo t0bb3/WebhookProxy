@@ -9,6 +9,7 @@ using WebhookProxy.Server.Models;
 using Newtonsoft.Json;
 using System.IO;
 using System.Net.Http;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using WebhookProxy.Server.IO;
 
 namespace WebhookProxy.Server.Controllers
@@ -25,6 +26,7 @@ namespace WebhookProxy.Server.Controllers
 
         private readonly IHubContext<ProxyClientHub, IProxyClient> _proxyClientHubContext;
         private readonly TimeSpan _proxyClientForwardTimeout = TimeSpan.FromSeconds(60);
+        protected internal static readonly MediaType jsonMediaType = new MediaType("application/json");
 
         [Route("{endpoint}")]
         [HttpPost, HttpGet, HttpPut, HttpDelete]
@@ -46,7 +48,7 @@ namespace WebhookProxy.Server.Controllers
                 {
                     var client = GetProxyClient(proxyClientId);
 
-                    var proxyClientRequest = CreateProxyClientRequest(proxyClientId, new HttpMethod(Request.Method), Request.Headers, requestBody);
+                    var proxyClientRequest = CreateProxyClientRequest(proxyClientId, new HttpMethod(Request.Method), Request.Headers, requestBody, Request.ContentType);
 
                     await ForwardWebhookToProxyClient(client, proxyClientRequest);
                 }
@@ -81,10 +83,7 @@ namespace WebhookProxy.Server.Controllers
 
             dynamic requestBody = bodyStream.ReadToEnd();
 
-            var expectJson = Request.Headers.Where(header => header.Key.ToLower().Equals("content-type"))
-                                            .Any(header => header.Value.Contains("application/json"));
-
-            if (expectJson)
+            if (IsJson(Request.ContentType))
                 requestBody = JsonConvert.DeserializeObject(requestBody);
 
             bodyStream.Close();
@@ -123,14 +122,11 @@ namespace WebhookProxy.Server.Controllers
             return proxyClient;
         }
 
-        private ProxyClientRequest CreateProxyClientRequest(string proxyClientId, HttpMethod httpMethod, IHeaderDictionary httpHeaders, dynamic httpBody)
+        private ProxyClientRequest CreateProxyClientRequest(string proxyClientId, HttpMethod httpMethod, IHeaderDictionary httpHeaders, dynamic httpBody, string contentType)
         {
             var headers = httpHeaders.ToDictionary(header => header.Key, header => header.Value.ToString());
 
-            var expectJson = headers.Where(header => header.Key.ToLower().Equals("content-type"))
-                                    .Any(header => header.Value.Contains("application/json"));
-
-            var body = expectJson ? JsonConvert.SerializeObject(httpBody) : httpBody;
+            var body = IsJson(contentType) ? JsonConvert.SerializeObject(httpBody) : httpBody;
 
             var proxyClientRequest = new ProxyClientRequest(proxyClientId, httpMethod, headers, body);
 
@@ -145,6 +141,13 @@ namespace WebhookProxy.Server.Controllers
         private ProxyClientResponse WaitForProxyClientResponse(string proxyClientId)
         {
             return RequestPool.WaitForProxyClientResponse(proxyClientId, _proxyClientForwardTimeout);
+        }
+
+        private static bool IsJson(string contentType)
+        {
+            var mediaType = new MediaType(contentType);
+            var expectJson = mediaType.IsSubsetOf(jsonMediaType);
+            return expectJson;
         }
 
     }
